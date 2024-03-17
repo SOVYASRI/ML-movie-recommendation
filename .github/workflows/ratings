@@ -1,0 +1,65 @@
+!pip install scikit-surprise
+
+import pandas as pd
+from surprise import Dataset, Reader
+from surprise import SVD
+from surprise.model_selection import train_test_split
+from surprise import accuracy
+
+data = pd.read_csv('rating.csv')
+reader = Reader(rating_scale=(1, 5))
+dataset = Dataset.load_from_df(data[['userId', 'movieId', 'rating']], reader)
+
+trainset, testset = train_test_split(dataset, test_size=0.2)
+
+algo = SVD()
+
+algo.fit(trainset)
+
+predictions = algo.test(testset)
+
+accuracy.rmse(predictions)
+
+data.info()
+data.head()
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+data = pd.read_csv('rating.csv')
+
+plt.figure(figsize=(8, 6))
+sns.countplot(x='rating', data=data)
+plt.title('Distribution of Ratings')
+plt.xlabel('Rating')
+plt.ylabel('Count')
+plt.show()
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+data = pd.read_csv('rating.csv')
+
+ratings_per_user = data.groupby('userId')['rating'].count().reset_index()
+plt.figure(figsize=(10, 6))
+sns.histplot(ratings_per_user['rating'], bins=50)
+plt.title('Number of Ratings per User')
+plt.xlabel('Number of Ratings')
+plt.ylabel('Count')
+plt.show()
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+data = pd.read_csv('rating.csv')
+
+ratings_per_movie = data.groupby('movieId')['rating'].count().reset_index()
+plt.figure(figsize=(10, 6))
+sns.histplot(ratings_per_movie['rating'], bins=50)
+plt.title('Number of Ratings per Movie')
+plt.xlabel('Number of Ratings')
+plt.ylabel('Count')
+plt.show()
